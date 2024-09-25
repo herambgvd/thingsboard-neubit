@@ -1,0 +1,218 @@
+{% extends "partials/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load form_tags %}
+{% load widget_tweaks %}
+{% block title %}Location{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+		<!-- ============================================================== -->
+		<!-- Start right Content here -->
+		<!-- ============================================================== -->
+		<div class="main-content">
+
+				<div class="page-content">
+						<div class="container-fluid">
+
+								{% block pagetitle %}
+										{% include "partials/page-title.html" with pagetitle="Locations" title="Locations" subtitle="Settings" %}
+								{% endblock pagetitle %}
+								<div class="row">
+										<div class="col m-2">
+												<div class="text-sm-end">
+														<a href="{% url 'teams:manage_teams' %}">
+																<button type="button" class="btn btn-outline-primary">
+																		<i class="mdi mdi-arrow-left"></i> Back To Main
+																</button>
+														</a>
+												</div>
+										</div>
+								</div>
+
+								<!-- Location Onboarding -->
+								<div class="row m-2">
+										<div class="col">
+												<div class="card">
+														<div class="card-header">
+																<span class="text text-muted">Location Info</span>
+														</div>
+														<div class="card-body">
+																<form method="post">
+																		{% csrf_token %}
+																		<div class="row m-4">
+																				<div class="col">
+																						<label class="label">Name</label>
+																						{% render_field team_form.name class="form-control" %}
+																				</div>
+																				<div class="col">
+																						<label class="label">Unique ID</label>
+																						{% render_field team_form.slug class="form-control" %}
+																				</div>
+																		</div>
+																		{% if create or request.team_membership.role == 'admin' %}
+																				<div class="row m-4">
+																						<button type="submit" class="btn btn-outline-success">Submit</button>
+																				</div>
+																		{% endif %}
+																</form>
+														</div>
+												</div>
+										</div>
+								</div>
+								{% if not create %}
+										<!-- Team Onboarding -->
+										<div class="row m-2">
+												<div class="col-md-8">
+														<div class="card">
+																<div class="card-header">
+																		<span class="text text-muted">Team Members</span>
+																</div>
+																<div class="card-body">
+																		<div class='table-responsive'>
+																				<table class="table pg-table">
+																						<thead>
+																						<tr>
+																								<th>{% translate "Member" %}</th>
+																								<th>{% translate "Role" %}</th>
+																						</tr>
+																						</thead>
+																						<tbody>
+																						{% for membership in team.sorted_memberships.all %}
+																								<tr>
+																										<td>
+																												{% if request.team_membership.is_admin or request.team_membership == membership %}
+																														<a class="link"
+																														   href="{% url 'single_team:team_membership_details' request.team.slug membership.pk %}">{{ membership.user }}</a>
+																												{% else %}
+																														{{ membership.user }}
+																												{% endif %}
+																										</td>
+																										<td>{{ membership.get_role_display }}</td>
+																								</tr>
+																						{% endfor %}
+																						</tbody>
+																				</table>
+																		</div>
+																</div>
+														</div>
+												</div>
+												<div class="col-md-4">
+														<div class="card">
+																<div class="card-header">
+																		<span class="text text-muted">Invite Team Members</span>
+																</div>
+																<div class="card-body">
+																		<form hx-post="{% url 'single_team:send_invitation' request.team.slug %}"
+																		      hx-target="#invitation-form-and-table">
+																				{% csrf_token %}
+																				<div class="row m-2">
+																						<div class="col">
+																								<label class="label">Email</label>
+																								{% render_field invitation_form.email class="form-control" %}
+																						</div>
+																				</div>
+																				<div class="row m-2">
+																						<div class="col">
+																								<label class="label">Role</label>
+																								{% render_field invitation_form.role class="form-select" %}
+																						</div>
+																				</div>
+																				<div class="row m-4">
+																						<button type="submit" class="btn btn-outline-success">Submit</button>
+																				</div>
+																		</form>
+																</div>
+														</div>
+												</div>
+										</div>
+										<!-- Invitations Status -->
+										<div class="row m-2">
+												<div class="col">
+														<div class="card">
+																<div class="card-header">
+																		<span class="text text-muted">Pending Invitations</span>
+																</div>
+																<div class="card-body text-center">
+																		{#																{% if pending_invitations.count %}#}
+																		<div class='table-responsive'>
+																				<table class="table pg-table">
+																						<thead>
+																						<tr>
+																								<th>{% translate "Email" %}</th>
+																								<th>{% translate "Invited" %}</th>
+																								<th>{% translate "Role" %}</th>
+																								{% if request.team_membership.role == 'admin' %}
+																										<th></th>{% endif %}
+																						</tr>
+																						</thead>
+																						<tbody>
+																						{% for invitation in pending_invitations %}
+																								<tr>
+																										<td>{{ invitation.email }}</td>
+																										<td>{{ invitation.created_at }}</td>
+																										<td>{{ invitation.role }}</td>
+																										{% if request.team_membership.role == 'admin' %}
+																												<td class="pg-inline-buttons pg-justify-content-end">
+																														<form hx-post="{% url 'single_team:resend_invitation' request.team.slug invitation.id %}"
+																														      hx-target="this" hx-swap="outerHTML">
+																																{% csrf_token %}
+																																<input class="pg-button-secondary" type="submit"
+																																       value="{% translate "Resend Invitation" %}">
+																														</form>
+																														<form hx-post="{% url 'single_team:cancel_invitation' request.team.slug invitation.id %}"
+																														      hx-target="closest tr" hx-swap="outerHTML swap:1s">
+																																{% csrf_token %}
+																																<input class="pg-button-secondary mx-2" type="submit"
+																																       value="{% translate "Cancel Invitation" %}">
+																														</form>
+																												</td>
+																										{% endif %}
+																								</tr>
+																						{% endfor %}
+																						</tbody>
+																				</table>
+																		</div>
+																		{#																{% else %}#}
+																		{#																		<p class="my-2 has-text-grey text-muted">#}
+																		{#																				Any pending invitations will show up here until accepted.#}
+																		{#																		</p>#}
+																		{#																{% endif %}#}
+																</div>
+														</div>
+												</div>
+										</div>
+										<!-- Location Delete -->
+										{% if request.team_membership.role == 'admin' %}
+												<div class="row m-2">
+														<div class="col">
+																<div class="card">
+																		<div class="card-body">
+																				<div class="row m-4">
+																						<button class="btn btn-danger modal-opener" type="button"
+																						        data-bs-toggle="modal" data-bs-target="#delete-modal">
+																								DELETE LOCATION
+																						</button>
+																				</div>
+																		</div>
+																</div>
+														</div>
+												</div>
+												{% include 'teams/components/delete_team_modal.html' %}
+										{% endif %}
+								{% endif %}
+
+
+						</div>
+						<!-- container-fluid -->
+				</div>
+				<!-- End Page-content -->
+
+				{% block footer %}
+						{% include "partials/footer.html" %}
+				{% endblock footer %}
+		</div>
+		<!-- end main content-->
+{% endblock content %}
+{% block extra_js %}
+{% endblock extra_js %}

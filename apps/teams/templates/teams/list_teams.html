@@ -1,0 +1,136 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load team_tags %}
+{% block title %}Location Management{% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+		<!-- ============================================================== -->
+		<!-- Start right Content here -->
+		<!-- ============================================================== -->
+		<div class="main-content">
+
+				<div class="page-content">
+						<div class="container-fluid">
+								{% block pagetitle %}
+										{% include "partials/page-title.html" with pagetitle="Locations" title="Locations" subtitle="Settings" %}
+								{% endblock pagetitle %}
+								<div class="row">
+										<div class="col m-2">
+												<div class="text-sm-end">
+														{% if team and request.user|is_admin_of:team %}
+																<a href="{% url 'teams:create_team' %}">
+																		<button class="btn btn-outline-success">
+																				<i class="bx bx-plus"></i>Add Locations
+																		</button>
+																</a>
+														{% endif %}
+												</div>
+										</div>
+								</div>
+
+								<div class="row">
+										{% if teams %}
+												{% for team in teams %}
+														<div class="col-xxl-3 col-sm-6 project-card">
+																<div class="card card-height-100">
+																		<div class="card-body">
+																				<div class="d-flex flex-column h-100">
+																						<div class="d-flex">
+																								<div class="flex-grow-1">
+																										<p class="text-muted mb-4">Created At : {{ team.created_at }}</p>
+																								</div>
+																						</div>
+																						<div class="d-flex mb-2">
+																								<div class="flex-shrink-0 me-3">
+																										<div class="avatar-sm">
+                                                        <span class="avatar-title bg-success rounded p-2">
+		                                                        <i class="bx bx-building-house"></i>
+                                                        </span>
+																										</div>
+																								</div>
+																								<div class="flex-grow-1">
+																										<h5 class="mb-1 fs-15">
+																												<a href="#" class="text-body">{{ team.name }}</a>
+																										</h5>
+																										{#																										<p class="text-muted mb-0">{{ branch.city }}</p>#}
+																								</div>
+																						</div>
+																						<div class="mt-auto">
+																								<div class="d-flex mb-2">
+																										<div class="flex-grow-1">
+																												<div>Allowed User</div>
+																										</div>
+																										<div class="flex-shrink-0">
+																												<div>
+																														<span class="badge badge-label">{{ team.members.count }}</span>
+																												</div>
+																										</div>
+																								</div>
+																						</div>
+																				</div>
+
+																		</div>
+																		<!-- end card body -->
+																		<div class="card-footer bg-transparent border-top-dashed py-2 text-center">
+																				<div class="d-flex">
+																						<div class="flex-grow-1">
+																								<a href="{% url 'web_team:home' team.slug %}"
+																								   class="avatar-group-item">
+																										<button class="btn btn-sm btn-warning">Dashboard</button>
+																								</a>
+																								<a class="avatar-group-item"
+																								   href="{% url 'single_team:manage_team' team.slug %}">
+																										<button class="btn btn-sm btn-primary">
+																												{% if  request.user|is_admin_of:team %}
+																														Edit{% else %}
+																														View Details{% endif %}</button>
+																								</a>
+																						</div>
+																				</div>
+
+																		</div>
+																		<!-- end card footer -->
+																</div>
+																<!-- end card -->
+														</div>
+												{% endfor %}
+										{% else %}
+												<div>
+														<div class="pg-columns">
+																<div class="pg-column-one-third">
+																		<img class="img-fluid" alt="Nothing Here"
+																		     src="{% static 'images/undraw/undraw_team.svg' %}">
+																</div>
+																<div class="pg-column">
+																		<h1 class="pg-title">No Locations Yet!</h1>
+																		<h2 class="pg-subtitle">Onboard your location below to get started.</h2>
+																		<p>
+																				{% if request.user|is_admin_of:team %}
+																						<a class="pg-button-primary" href="{% url 'teams:create_team' %}">
+																								<span class="pg-icon"><i class="fa fa-plus"></i></span>
+																								<span>Create Team</span>
+																						</a>
+																				{% else %}
+																						<span class="text"> Contact your admin</span>
+																				{% endif %}
+																		</p>
+																</div>
+														</div>
+												</div>
+										{% endif %}
+								</div> <!-- end row-->
+
+						</div>
+						<!-- container-fluid -->
+				</div>
+				<!-- End Page-content -->
+
+				{% block footer %}
+						{% include "partials/footer.html" %}
+				{% endblock footer %}
+		</div>
+		<!-- end main content-->
+{% endblock content %}
+{% block extra_js %}
+{% endblock extra_js %}

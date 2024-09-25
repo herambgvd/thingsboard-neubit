@@ -1,0 +1,324 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load team_tags %}
+{% block title %}Dashboard | {{ team|truncatechars:20 }} {% endblock title %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+		<!-- ============================================================== -->
+		<!-- Start right Content here -->
+		<!-- ============================================================== -->
+		<div class="main-content">
+
+				<div class="page-content">
+						<div class="container-fluid">
+								<div class="row">
+										{% for device_id, thermostat_data in thermostat_device_sensor_data.items %}
+												<div class="col-md-6">
+														<div class="card">
+																<div class="card-header">
+																		<p class="card-title"> Device Name : {{ thermostat_data.thermostate_device.deviceLabel }}</p>
+																		<div class="row">
+																				<div class="col-md-6">
+																						<span>Site: {{ thermostat_data.site_id }}</span>
+																				</div>
+																				<div class="col-md-6">
+																						<span>Room No. {{ thermostat_data.room_number }}</span>
+																				</div>
+																		</div>
+
+																		{% if thermostat_data %}
+																				<p class="text text-muted">Reading at: {{ thermostat_data.created_at }}</p>
+																		{% else %}
+																				<p class="text text-muted">No data available</p>
+																		{% endif %}
+																</div>
+																<div class="card-body">
+																		{% if thermostat_data %}
+																				<div class="row">
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">PM 10</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+				                                                            <span class="text">
+				                                                                {{ thermostat_data.pm_ten|default:"0" }}
+				                                                                <small style="font-size: smaller;">µg/m&sup3;</small>
+				                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+														                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+														                                                    <img src="{% static 'images/dashboard/iot/pm10.png' %}"
+														                                                         alt="pm10"
+														                                                         style="height: 47px; width: 47px">
+														                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div> <!-- end  -->
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">PM 2.5</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                 {{ thermostat_data.pm_two_five|default:"0" }}
+                                                                <small style="font-size: smaller;">µg/m&sup3;</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+						                                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+						                                                                <img src="{% static 'images/dashboard/iot/pm25.png' %}"
+						                                                                     alt="co2"
+						                                                                     style="height: 40px; width: 40px">
+						                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div>
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">CO<sub>2</sub></p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                {{ thermostat_data.co_two|default:"0" }}
+                                                                <small style="font-size: smaller;">ppm</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+														                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+														                                                    <img src="{% static 'images/dashboard/iot/co.png' %}"
+														                                                         alt="co2"
+														                                                         style="height: 47px; width: 47px">
+														                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div> <!-- end  -->
+																				</div>
+																				<!-- end PM2.5 & PM-10 & CO2-->
+																				<div class="row">
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">VOC</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                 {{ thermostat_data.voc|default:"0" }}
+                                                                <small style="font-size: smaller;">ppm</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+																																		  <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+				                                                                 <i class="ri-windy-fill text-info"></i>
+				                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div>
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">Noise</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                {{ thermostat_data.noise|default:"0" }}
+                                                                <small style="font-size: smaller;">dB</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+														                                             <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+				                                                                 <i class="ri-volume-vibrate-line text-info"></i>
+				                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div> <!-- end  -->
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">Humidity</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                 {{ thermostat_data.hum|default:"0" }}
+                                                                <small style="font-size: smaller;">%</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+				                                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+				                                                                 <i class="ri-contrast-drop-2-line text-info"></i>
+				                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div>
+																				</div>
+																				<!-- end Noise & VOC & Humidity -->
+																				<div class="row">
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">Heat
+																																		Ventilation</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                 {{ thermostat_data.hv|default:"0" }}
+                                                                <small style="font-size: smaller;">pa</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+																																		  <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+				                                                                 <i class=" ri-haze-2-fill text-info"></i>
+				                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div>
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">Light Intensity</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                {{ thermostat_data.lux|default:"0" }}
+                                                                <small style="font-size: smaller;">lux</small>
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+														                                             <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+				                                                                 <i class=" ri-lightbulb-flash-line text-info"></i>
+				                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div> <!-- end  -->
+																						<div class="col">
+																								<div class="card">
+																										<div class="card-body">
+																												<div class="d-flex justify-content-between">
+																														<div>
+																																<p class="fw-medium text-muted mb-0">Temp. Sensor</p>
+																																<h4 class="mt-4 fs-18 ff-secondary fw-semibold">
+                                                            <span class="text">
+                                                                 {{ thermostat_data.t_sen|default:"0" }}
+                                                            </span>
+																																</h4>
+																														</div>
+																														<div>
+																																<div class="avatar-sm flex-shrink-0">
+				                                                            <span class="avatar-title bg-info-subtle rounded-circle fs-2">
+				                                                                 <i class="ri-celsius-line text-info"></i>
+				                                                            </span>
+																																</div>
+																														</div>
+																												</div>
+																										</div><!-- end card body -->
+																								</div> <!-- end card-->
+																						</div>
+																				</div>
+																				<!-- end HV & LUX & Humidity -->
+																		{% else %}
+																				<p>No sensor data available for this device.</p>
+																		{% endif %}
+																</div>
+														</div>
+												</div>
+										{% endfor %}
+								</div>
+								<div class="row">
+										<div class="col-md-4">
+												<div class="card">
+														<div class="card-header">
+																<span class="text text-muted">IEQ Thermostat Devices</span>
+														</div>
+												</div>
+												<!-- Hidden element to store the base URL template -->
+												<div id="base-url-template" style="display: none;"></div>
+												<div class="pe-2 me-n1 mb-3" data-simplebar style="height: 300px">
+														{% for device in thermostat_device %}
+																<div class="card">
+																		<div class="card-body">
+																				<div class="d-flex mb-2">
+																						<div class="flex-shrink-0 me-3">
+																								<div class="avatar-sm">
+																										   <span class="avatar-title bg-success rounded p-2">
+																												   <i class="bx bx-building-house"></i>
+																										   </span>
+																								</div>
+																						</div>
+																						<div class="flex-grow-1">
+																								<h5 class="mb-1 fs-15">
+																										{{ device.deviceLabel }} -- {{ device.location }}
+																								</h5>
+																								<p class="text-muted mb-0">{{ device.deviceName }}</p>
+																						</div>
+																				</div>
+																		</div>
+																</div>
+														{% endfor %}
+												</div>
+										</div>
+								</div>
+
+						</div>
+						<!-- container-fluid -->
+				</div>
+				<!-- End Page-content -->
+
+				{% block footer %}
+						{% include "partials/footer.html" %}
+				{% endblock footer %}
+		</div>
+		<!-- end main content-->
+{% endblock content %}
+{% block extra_js %}
+{% endblock extra_js %}
