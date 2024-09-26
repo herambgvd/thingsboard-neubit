@@ -32,17 +32,27 @@ def team_home(request, team_slug):
     # Ensure that the requested team matches the slug in the URL
     assert request.team.slug == team_slug
 
-    # Fetch all devices under the specified category and team
-    thermostat_device = IotDevices.objects.filter(
-        team=request.team,
-        deviceCategory=IotCategories.objects.get(categoryName="IEQ thermostat")
-    ).all()
+    # Try to get the category, if not found, return None and handle it gracefully
+    try:
+        category = IotCategories.objects.get(categoryName="IEQ thermostat")
+    except IotCategories.DoesNotExist:
+        category = None
 
-    # Fetch the latest thermostat data for each device
-    thermostat_device_sensor_data = {
-        device.id: device.thermostat_sensor_data.order_by('-created_at').first()
-        for device in thermostat_device
-    }
+    thermostat_device = []
+    thermostat_device_sensor_data = {}
+
+    if category:
+        # Fetch all devices under the specified category and team
+        thermostat_device = IotDevices.objects.filter(
+            team=request.team,
+            deviceCategory=category
+        ).all()
+
+        # Fetch the latest thermostat data for each device
+        thermostat_device_sensor_data = {
+            device.id: device.thermostat_sensor_data.order_by('-created_at').first()
+            for device in thermostat_device
+        }
 
     return render(
         request,
