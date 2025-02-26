@@ -35,7 +35,7 @@ def thermostat_sensor_task():
 
             # Step 2: Fetch the category 'IEQ thermostat' from IotCategories
             try:
-                thermostat_category = IotCategories.objects.get(categoryName="IEQ thermostat")
+                thermostat_category = IotCategories.objects.get(categoryName="IEQ thermostat", team=config.team)
             except IotCategories.DoesNotExist:
                 print("IEQ thermostat category does not exist.")
                 continue
