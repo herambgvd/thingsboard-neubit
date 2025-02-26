@@ -17,7 +17,7 @@ def device(request, team_slug):
 @login_and_team_required(login_url='account_login')
 def device_create(request, team_slug):
     if request.method == 'POST':
-        form = IotDevicesForm(request.POST)
+        form = IotDevicesForm(request.POST or None, team=request.team)
         if form.is_valid():
             # Ensure the form is saved before proceeding
             data = form.save(commit=False)
@@ -44,7 +44,7 @@ def device_update(request, team_slug, deviceId):
             messages.success(request, "Device Updated Successfully.")
             return redirect('Infrastructure:device_home', team_slug=team_slug)
     else:
-        form = IotDevicesForm(instance=device_instance)
+        form = IotDevicesForm(instance=device_instance or None, team=request.team)
     context = {'form': form, 'device_instance': device_instance}
     return render(request, 'infrastructure/devices/device_update.html', context)
 

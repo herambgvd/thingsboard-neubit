@@ -34,7 +34,7 @@ def team_home(request, team_slug):
 
     # Try to get the category, if not found, return None and handle it gracefully
     try:
-        category = IotCategories.objects.get(categoryName="IEQ thermostat")
+        category = IotCategories.objects.get(categoryName="IEQ thermostat", team=request.team)
     except IotCategories.DoesNotExist:
         category = None
 

@@ -62,7 +62,8 @@ def get_devices(sender, instance, created, **kwargs):
                     deviceId=device['id']['id'],
                     deviceName=device['name'],
                     deviceLabel=device.get('label', ''),
-                    deviceCategory=IotCategories.objects.get(categoryName=categorySelect),
+                    deviceCategory=IotCategories.objects.get(categoryName=categorySelect,
+                                                             team=Team.objects.get(id=instance.team.id)),
                     created_at=datetime.datetime.fromtimestamp(device['createdTime'] // 1e3),
                     team=Team.objects.get(id=instance.team.id)
                 )

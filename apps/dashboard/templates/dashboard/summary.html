@@ -2,10 +2,10 @@
 {% load static %}
 {% block title %}Dashboard{% endblock title %}
 {% block extra_css %}
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-		      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-		      crossorigin=""/>
-		<style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <style>
         .card-clicked {
             cursor: wait;
         }
@@ -38,102 +38,102 @@
             margin-bottom: 14px;
             margin-left: 12px;
         }
-		</style>
+    </style>
 {% endblock extra_css %}
 {% block content %}
-		<!-- ============================================================== -->
-		<!-- Start right Content here -->
-		<!-- ============================================================== -->
-		<div class="main-content">
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
 
-				<div class="page-content">
-						<div class="container-fluid">
-								{% block pagetitle %}
-										{% include "partials/page-title.html" with pagetitle="Locations" title="Locations" subtitle="Settings" %}
-								{% endblock pagetitle %}
-								<!--  Organizations Access  -->
-								<div class="row">
-										<div class="col-md-3">
-												<div class="card">
-														<div class="card-header">
-																<span class="text text-muted">Locations</span>
-														</div>
-												</div>
-												<!-- Hidden element to store the base URL template -->
-												<div id="base-url-template"
-												     data-url-template="#"
-												     style="display: none;"></div>
-												<div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
-														{% for location in organizations %}
-																<div class="card branch-card" data-lat="{{ location.organization.latitude }}"
-																     data-lng="{{ location.organization.longitude }}"
-																     data-url="{% url 'Home:LocationDashboard' location.organization.id %}">
-																		<div class="card-body">
-																				<div class="d-flex mb-2">
-																						<div class="flex-shrink-0 me-3">
-																								<div class="avatar-sm">
+        <div class="page-content">
+            <div class="container-fluid">
+                {% block pagetitle %}
+                    {% include "partials/page-title.html" with pagetitle="Locations" title="Locations" subtitle="Settings" %}
+                {% endblock pagetitle %}
+                <!--  Organizations Access  -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="text text-muted">Locations</span>
+                            </div>
+                        </div>
+                        <!-- Hidden element to store the base URL template -->
+                        <div id="base-url-template"
+                             data-url-template="#"
+                             style="display: none;"></div>
+                        <div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
+                            {% for location in organizations %}
+                                <div class="card branch-card" data-lat="{{ location.organization.latitude }}"
+                                     data-lng="{{ location.organization.longitude }}"
+                                     data-url="{% url 'Home:LocationDashboard' location.organization.id %}">
+                                    <div class="card-body">
+                                        <div class="d-flex mb-2">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="avatar-sm">
 																		   <span class="avatar-title {% if location.organization.is_active %}
 																		   bg-success {% else %} bg-danger {% endif %}
 																		   rounded p-2">
 																				   <i class="bx bx-building-house"></i>
 																		   </span>
-																								</div>
-																						</div>
-																						<div class="flex-grow-1">
-																								<h5 class="mb-1 fs-15">
-																										{{ location.organization.name }}&nbsp;-&nbsp;{{ location.organization.branchCode }}
-																								</h5>
-																								<p class="text-muted mb-0">{{ location.organization.address }}</p>
-																								{% if location.is_admin %}
-																										<span class="badge badge-gradient-success">Admin</span>
-																								{% else %}
-																										<span class="badge badge-gradient-primary">Member</span>
-																								{% endif %}
-																						</div>
-																				</div>
-																		</div>
-																		<div class="card-footer">
-																				<a href="{% url 'Home:LocationDashboard' location.organization.id %}"
-																				   target="_blank">
-																						<button class="btn btn-sm btn-outline-success">Access</button>
-																				</a>
-																		</div>
-																</div>
-														{% endfor %}
-												</div>
-										</div>
-										<div class="col-md-9">
-												<div class="card">
-														<div class="card-header">
-																<span class="text text-muted">GIS</span>
-														</div>
-														<div class="card-body">
-																<div id="map" style="height: 450px;">
-																</div>
-														</div>
-												</div>
-										</div>
-								</div>
-						</div>
-						<!-- container-fluid -->
-				</div>
-				<!-- End Page-content -->
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1 fs-15">
+                                                    {{ location.organization.name }}&nbsp;-&nbsp;{{ location.organization.branchCode }}
+                                                </h5>
+                                                <p class="text-muted mb-0">{{ location.organization.address }}</p>
+                                                {% if location.is_admin %}
+                                                    <span class="badge badge-gradient-success">Admin</span>
+                                                {% else %}
+                                                    <span class="badge badge-gradient-primary">Member</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a href="{% url 'Home:LocationDashboard' location.organization.id %}"
+                                           target="_blank">
+                                            <button class="btn btn-sm btn-outline-success">Access</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="text text-muted">GIS</span>
+                            </div>
+                            <div class="card-body">
+                                <div id="map" style="height: 450px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
 
-				{% block footer %}
-						{% include "partials/footer.html" %}
-				{% endblock footer %}
-		</div>
-		<!-- end main content-->
+        {% block footer %}
+            {% include "partials/footer.html" %}
+        {% endblock footer %}
+    </div>
+    <!-- end main content-->
 {% endblock content %}
 {% block extra_js %}
-		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-		        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-		        crossorigin=""></script>
-		<script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script>
         // Pass the GeoJSON data to the external JavaScript file
         window.locationGeoJSON = {{ location_geojson|safe }};
         window.onlineUrl = "{% static 'marker/online.png' %}";
         window.offlineUrl = "{% static 'marker/offline.png' %}";
-		</script>
-		<script src="{% static 'js/gis.js' %}"></script>
+    </script>
+    <script src="{% static 'js/gis.js' %}"></script>
 {% endblock extra_js %}
