@@ -22,7 +22,7 @@ class Location(BaseTeamModel):
 
 class IotCategories(BaseTeamModel):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    categoryName = models.CharField(max_length=50, unique=True)
+    categoryName = models.CharField(max_length=50)
 
     def __str__(self):
         return self.categoryName
@@ -55,17 +55,17 @@ class IotDevices(BaseTeamModel):
 class ThermostatSensor(BaseTeamModel):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
     thermostate_device = models.ForeignKey(IotDevices, on_delete=models.CASCADE, related_name="thermostat_sensor_data")
-    pm_ten = models.CharField(max_length=100, null=True, blank=True) # Done
-    pm_two_five = models.CharField(max_length=100, null=True, blank=True) # Done
-    noise = models.CharField(max_length=100, null=True, blank=True) # Done
-    co_two = models.CharField(max_length=100, null=True, blank=True) # Done
+    pm_ten = models.CharField(max_length=100, null=True, blank=True)  # Done
+    pm_two_five = models.CharField(max_length=100, null=True, blank=True)  # Done
+    noise = models.CharField(max_length=100, null=True, blank=True)  # Done
+    co_two = models.CharField(max_length=100, null=True, blank=True)  # Done
     firmware_version = models.CharField(max_length=100, null=True, blank=True)
     fs = models.CharField(max_length=100, null=True, blank=True)
     mac = models.CharField(max_length=100, null=True, blank=True)
-    hum = models.CharField(max_length=100, null=True, blank=True) # Done
-    voc = models.CharField(max_length=100, null=True, blank=True) # Done
+    hum = models.CharField(max_length=100, null=True, blank=True)  # Done
+    voc = models.CharField(max_length=100, null=True, blank=True)  # Done
     state = models.CharField(max_length=100, null=True, blank=True)
-    lux = models.CharField(max_length=100, null=True, blank=True) # Done
+    lux = models.CharField(max_length=100, null=True, blank=True)  # Done
     cv = models.CharField(max_length=100, null=True, blank=True)
     hv = models.CharField(max_length=100, null=True, blank=True)
     t_sen = models.CharField(max_length=100, null=True, blank=True)
