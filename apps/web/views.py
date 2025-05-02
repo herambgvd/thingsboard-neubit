@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from health_check.views import MainView
 
 from apps.infrastructure.models import IotDevices, IotCategories
+from apps.settings.models import TeamProfileImage
 from apps.teams.decorators import login_and_team_required
 
 
@@ -41,6 +42,7 @@ def team_home(request, team_slug):
     thermostat_device = []
     thermostat_device_sensor_data = {}
 
+
     if category:
         # Fetch all devices under the specified category and team
         thermostat_device = IotDevices.objects.filter(
@@ -54,6 +56,9 @@ def team_home(request, team_slug):
             for device in thermostat_device
         }
 
+    # Org Profile Image
+    profile_image = TeamProfileImage.objects.get(team=request.team)
+    print(profile_image)
     return render(
         request,
         "teams/teams_dashboard.html",
@@ -63,6 +68,7 @@ def team_home(request, team_slug):
             "page_title": _("{team} Dashboard").format(team=request.team),
             "thermostat_device": thermostat_device,
             "thermostat_device_sensor_data": thermostat_device_sensor_data,
+            "profile_image": profile_image
         },
     )
 
