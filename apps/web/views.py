@@ -5,8 +5,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from health_check.views import MainView
+from django.utils.timezone import now
 
-from apps.infrastructure.models import IotDevices, IotCategories
+from apps.infrastructure.models import IotDevices, IotCategories, Location, ThermostatSensor
 from apps.settings.models import TeamProfileImage
 from apps.teams.decorators import login_and_team_required
 
@@ -30,35 +31,66 @@ def home(request):
 
 @login_and_team_required(login_url="account_login")
 def team_home(request, team_slug):
-    # Ensure that the requested team matches the slug in the URL
     assert request.team.slug == team_slug
 
-    # Try to get the category, if not found, return None and handle it gracefully
     try:
         category = IotCategories.objects.get(categoryName="IEQ thermostat", team=request.team)
     except IotCategories.DoesNotExist:
         category = None
 
-    thermostat_device = []
-    thermostat_device_sensor_data = {}
-
+    locations_with_devices = []
 
     if category:
-        # Fetch all devices under the specified category and team
-        thermostat_device = IotDevices.objects.filter(
-            team=request.team,
-            deviceCategory=category
-        ).all()
+        today = now().date()
 
-        # Fetch the latest thermostat data for each device
-        thermostat_device_sensor_data = {
-            device.id: device.thermostat_sensor_data.order_by('-created_at').first()
-            for device in thermostat_device
-        }
+        locations = Location.objects.filter(team=request.team)
 
-    # Org Profile Image
+        for location in locations:
+            devices = IotDevices.objects.filter(
+                team=request.team,
+                deviceCategory=category,
+                location=location
+            )
+
+            device_data = []
+
+            for device in devices:
+                # Latest reading
+                latest_sensor = device.thermostat_sensor_data.order_by("-created_at").first()
+
+                # Today's average values
+                today_sensors = device.thermostat_sensor_data.filter(
+                    created_at__date=today
+                ).exclude(pm_ten__isnull=True, pm_two_five__isnull=True)
+
+                def to_float(val):
+                    try:
+                        return float(val)
+                    except (TypeError, ValueError):
+                        return 0.0
+
+                pm_ten_avg = 0.0
+                pm_two_five_avg = 0.0
+
+                if today_sensors.exists():
+                    pm_ten_avg = sum([to_float(s.pm_ten) for s in today_sensors]) / today_sensors.count()
+                    pm_two_five_avg = sum([to_float(s.pm_two_five) for s in today_sensors]) / today_sensors.count()
+
+                device_data.append({
+                    "device": device,
+                    "latest_sensor": latest_sensor,
+                    "pm_ten_avg": round(pm_ten_avg, 2),
+                    "pm_two_five_avg": round(pm_two_five_avg, 2),
+                })
+
+            if device_data:
+                locations_with_devices.append({
+                    "location": location,
+                    "devices": device_data
+                })
+
     profile_image = TeamProfileImage.objects.get(team=request.team)
-    print(profile_image)
+
     return render(
         request,
         "teams/teams_dashboard.html",
@@ -66,8 +98,7 @@ def team_home(request, team_slug):
             "team": request.team,
             "active_tab": "dashboard",
             "page_title": _("{team} Dashboard").format(team=request.team),
-            "thermostat_device": thermostat_device,
-            "thermostat_device_sensor_data": thermostat_device_sensor_data,
+            "locations_with_devices": locations_with_devices,
             "profile_image": profile_image
         },
     )
