@@ -1,8 +1,42 @@
 {% extends "partials/base.html" %}
 {% load static %}
+{% load feature_flags %}
+{% load waffle_tags %}
 {% load team_tags %}
+{% load air_quality_tags %}
 {% block title %}Dashboard | {{ team|truncatechars:20 }} {% endblock title %}
 {% block extra_css %}
+    <style>
+        .bg-orange {
+            background-color: #f39c12 !important;
+        }
+
+        .bg-purple {
+            background-color: #6f42c1 !important;
+        }
+
+        .bg-maroon {
+            background-color: #800000 !important;
+        }
+
+        .bg-success,
+        .bg-warning,
+        .bg-orange,
+        .bg-danger,
+        .bg-purple,
+        .bg-maroon {
+            transition: background-color 0.3s ease;
+        }
+
+        .text-white {
+            color: #ffffff !important;
+        }
+
+        .text-dark {
+            color: #212529 !important;
+        }
+
+    </style>
 {% endblock extra_css %}
 {% block content %}
     <!-- ============================================================== -->
@@ -10,105 +44,163 @@
     <!-- ============================================================== -->
     <div class="main-content">
 
-    <div class="page-content">
-        <div class="container-fluid">
+        <div class="page-content">
+            <div class="container-fluid">
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body" style="padding: 0; max-height: 600px; overflow: hidden;">
-                            <img src="{{ profile_image.image.url }}" alt="Profile Image"
-                                 style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body" style="padding: 0; max-height: 600px; overflow: hidden;">
+                                        <img src="{{ profile_image.image.url }}" alt="Profile Image"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered text-center align-middle">
+                                        <thead class="table-light">
+                                        <tr>
+                                            <th>Air Quality</th>
+                                            <th>PM2.5 (µg/m³)</th>
+                                            <th>PM10 (µg/m³)</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr class="bg-success text-white">
+                                            <td>Good</td>
+                                            <td>0 - 12</td>
+                                            <td>0 - 54</td>
+                                        </tr>
+                                        <tr class="bg-warning text-dark">
+                                            <td>Moderate</td>
+                                            <td>12.1 - 35.4</td>
+                                            <td>55 - 154</td>
+                                        </tr>
+                                        <tr class="bg-orange text-dark">
+                                            <td>Unhealthy for Sensitive Groups</td>
+                                            <td>35.5 - 55.4</td>
+                                            <td>155 - 254</td>
+                                        </tr>
+                                        <tr class="bg-danger text-white">
+                                            <td>Unhealthy</td>
+                                            <td>55.5 - 150.4</td>
+                                            <td>255 - 354</td>
+                                        </tr>
+                                        <tr class="bg-purple text-white">
+                                            <td>Very Unhealthy</td>
+                                            <td>150.5 - 250.4</td>
+                                            <td>355 - 424</td>
+                                        </tr>
+                                        <tr class="bg-maroon text-white">
+                                            <td>Hazardous</td>
+                                            <td>250.5+</td>
+                                            <td>425+</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <!-- Tabs for Locations -->
-                    <ul class="nav nav-tabs mb-3" id="locationTab" role="tablist">
-                        {% for loc in locations_with_devices %}
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link {% if forloop.first %}active{% endif %}"
-                                        id="tab-{{ loc.location.id }}"
-                                        data-bs-toggle="tab" data-bs-target="#loc-{{ loc.location.id }}"
-                                        type="button"
-                                        role="tab" aria-controls="loc-{{ loc.location.id }}" aria-selected="true">
-                                    {{ loc.location.location }}
-                                </button>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <!-- Content for each Location Tab -->
-                    <div class="tab-content" id="locationTabContent">
-                        {% for loc in locations_with_devices %}
-                            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-                                 id="loc-{{ loc.location.id }}"
-                                 role="tabpanel" aria-labelledby="tab-{{ loc.location.id }}">
+                    <div class="col-md-6">
+                        <!-- Tabs for Locations -->
+                        <ul class="nav nav-tabs mb-3" id="locationTab" role="tablist">
+                            {% for loc in locations_with_devices %}
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link {% if forloop.first %}active{% endif %}"
+                                            id="tab-{{ loc.location.id }}"
+                                            data-bs-toggle="tab" data-bs-target="#loc-{{ loc.location.id }}"
+                                            type="button"
+                                            role="tab" aria-controls="loc-{{ loc.location.id }}" aria-selected="true">
+                                        {{ loc.location.location }}
+                                    </button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <!-- Content for each Location Tab -->
+                        <div class="tab-content" id="locationTabContent">
+                            {% for loc in locations_with_devices %}
+                                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                                     id="loc-{{ loc.location.id }}"
+                                     role="tabpanel" aria-labelledby="tab-{{ loc.location.id }}">
 
-                                <div class="row">
-                                    {% for item in loc.devices %}
-                                        {% with thermostat_data=item.latest_sensor %}
-                                            <div class="col-md-6">
-                                                <div class="card mb-3">
-                                                    <div class="card-header">
-                                                        <strong>ID:{{ item.device.deviceName }}</strong><br>
-                                                        <small>Label: {{ item.device.deviceLabel }}</small><br>
-                                                        <small>Site: {{ thermostat_data.site_id }}</small><br>
-                                                        <small>Room: {{ thermostat_data.room_number }}</small><br>
-                                                        <small class="text-muted">Reading
-                                                            at: {{ thermostat_data.created_at }}</small>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <!-- PM10 -->
-                                                            <div class="col-md-6">
-                                                                <div class="card text-center">
-                                                                    <div class="card-body">
-                                                                        <p class="text-muted mb-1">PM10</p>
-                                                                        <h5>
-                                                                            {{ thermostat_data.pm_ten|default:"0" }}
-                                                                            <small>µg/m³</small>
-                                                                        </h5>
-                                                                        <p class="text-muted small">Avg
-                                                                            Today: {{ item.pm_ten_avg }}</p>
+                                    <div class="row">
+                                        {% for item in loc.devices %}
+                                            {% with thermostat_data=item.latest_sensor %}
+                                                <div class="col-md-6">
+                                                    <div class="card mb-3">
+                                                        <div class="card-header">
+                                                            {% is_flag_active 'room' team.slug as room_enabled %}
+                                                            {% if room_enabled %}
+                                                                <small>Label: {{ item.device.deviceLabel }}</small><br>
+                                                                <small>Site: {{ thermostat_data.site_id }}</small><br>
+                                                                <small>Room: {{ thermostat_data.room_number }}</small>
+                                                                <br>
+                                                            {% endif %}
+                                                            <small class="text-muted">Reading
+                                                                at: {{ thermostat_data.created_at }}</small>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+
+                                                                <!-- PM10 -->
+                                                                <div class="col-md-6">
+                                                                    <div class="card text-center {{ thermostat_data.pm_ten|get_pm_card_color:'pm10' }}">
+                                                                        <div class="card-body">
+                                                                            <p class="mb-1 fw-semibold">PM10</p>
+                                                                            <h5>
+                                                                                {{ thermostat_data.pm_ten|default:"0" }}
+                                                                                <small>µg/m³</small>
+                                                                            </h5>
+                                                                            <p class="small">Avg
+                                                                                Today: {{ item.pm_ten_avg }}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
 
-                                                            <!-- PM2.5 -->
-                                                            <div class="col-md-6">
-                                                                <div class="card text-center">
-                                                                    <div class="card-body">
-                                                                        <p class="text-muted mb-1">PM2.5</p>
-                                                                        <h5>
-                                                                            {{ thermostat_data.pm_two_five|default:"0" }}
-                                                                            <small>µg/m³</small>
-                                                                        </h5>
-                                                                        <p class="text-muted small">Avg
-                                                                            Today: {{ item.pm_two_five_avg }}</p>
+                                                                <!-- PM2.5 -->
+                                                                <div class="col-md-6">
+                                                                    <div class="card text-center {{ thermostat_data.pm_two_five|get_pm_card_color:'pm25' }}">
+                                                                        <div class="card-body">
+                                                                            <p class="mb-1 fw-semibold">PM2.5</p>
+                                                                            <h5>
+                                                                                {{ thermostat_data.pm_two_five|default:"0" }}
+                                                                                <small>µg/m³</small>
+                                                                            </h5>
+                                                                            <p class="small">Avg
+                                                                                Today: {{ item.pm_two_five_avg }}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </div>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </div>
 
-                            </div>
-                        {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-
+                <!-- container-fluid -->
             </div>
-            <!-- container-fluid -->
-        </div>
-        <!-- End Page-content -->
+            <!-- End Page-content -->
 
-        {% block footer %}
-            {% include "partials/footer.html" %}
-        {% endblock footer %}
+            {% block footer %}
+                {% include "partials/footer.html" %}
+            {% endblock footer %}
+        </div>
     </div>
     <!-- end main content-->
 {% endblock content %}
