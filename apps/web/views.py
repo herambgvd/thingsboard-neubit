@@ -49,7 +49,8 @@ def team_home(request, team_slug):
             devices = IotDevices.objects.filter(
                 team=request.team,
                 deviceCategory=category,
-                location=location
+                location=location,
+                status=True
             )
 
             device_data = []

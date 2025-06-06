@@ -42,6 +42,7 @@ class IotDevices(BaseTeamModel):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     location = models.ForeignKey(Location, null=True, blank=True, on_delete=models.CASCADE,
                                  related_name='location_device')
+    status = models.BooleanField(default=True, null=True, blank=True)
 
     def __str__(self):
         return self.deviceName
