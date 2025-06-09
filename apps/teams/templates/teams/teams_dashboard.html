@@ -144,7 +144,8 @@
                                                                 <small>Room: {{ thermostat_data.room_number }}</small>
                                                                 <br>
                                                             {% endif %}
-                                                            <small class="text-muted">Location:{{ thermostat_data.room_number }}</small>
+                                                            <small class="text-muted">Location:{{ item.device.location }}</small>
+                                                            <br/>
                                                             <small class="text-muted">Reading
                                                                 at: {{ thermostat_data.created_at }}</small>
                                                         </div>
